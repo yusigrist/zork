@@ -6,24 +6,22 @@ import java.util.Stack;
 /**
  * Class Game - the main class of the "Zork" game.
  *
- * Author:  Michael Kolling
- * Version: 1.1
- * Date:    March 2000
+ * Author: Michael Kolling Version: 1.1 Date: March 2000
  * 
- *  This class is the main class of the "Zork" application. Zork is a very
- *  simple, text based adventure game.  Users can walk around some scenery.
- *  That's all. It should really be extended to make it more interesting!
+ * This class is the main class of the "Zork" application. Zork is a very
+ * simple, text based adventure game. Users can walk around some scenery. That's
+ * all. It should really be extended to make it more interesting!
  * 
- *  To play this game, create an instance of this class and call the "play"
- *  routine.
+ * To play this game, create an instance of this class and call the "play"
+ * routine.
  * 
- *  This main class creates and initialises all the others: it creates all
- *  rooms, creates the parser and starts the game.  It also evaluates the
- *  commands that the parser returns.
+ * This main class creates and initialises all the others: it creates all rooms,
+ * creates the parser and starts the game. It also evaluates the commands that
+ * the parser returns.
  */
 
 public class Game {
-	
+
 	private Parser parser;
 	private Room currentRoom;
 	private Room outside, lab, tavern, gblock, office, garden;
@@ -35,9 +33,9 @@ public class Game {
 	 * Create the game and initialise its internal map.
 	 */
 	public Game() {
-		
+
 		parser = new Parser(System.in);
-		
+
 		// Create all the rooms and link their exits together.
 		outside = new Room("outside G block on Peninsula campus");
 		lab = new Room("lab, a lecture theatre in A block");
@@ -56,7 +54,7 @@ public class Game {
 
 		currentRoom = outside; // start game outside
 		previousRooms = new Stack<>();
-		
+
 		map = new ArrayList<>();
 		map.add(outside);
 		map.add(lab);
@@ -64,24 +62,23 @@ public class Game {
 		map.add(gblock);
 		map.add(office);
 		map.add(garden);
-		
+
 		hammer = new Item("Hammer", "Crafting Tool", 2.0);
-		
+
 		key = new Item("Key", "Used for opening doors", 0.5);
-		
+
 		lab.addItem(hammer);
 		outside.addItem(key);
-		
+
 	}
 
-
 	/**
-	 *  Main play routine.  Loops until end of play.
+	 * Main play routine. Loops until end of play.
 	 */
 	public void play() {
 		printWelcome();
 
-		// Enter the main command loop.  Here we repeatedly read commands and
+		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the game is over.
 
 		boolean finished = false;
@@ -105,9 +102,8 @@ public class Game {
 	}
 
 	/**
-	 * Given a command, process (that is: execute) the command.
-	 * If this command ends the game, true is returned, otherwise false is
-	 * returned.
+	 * Given a command, process (that is: execute) the command. If this command ends
+	 * the game, true is returned, otherwise false is returned.
 	 */
 	private boolean processCommand(Command command) {
 		if (command.isUnknown()) {
@@ -118,32 +114,31 @@ public class Game {
 		String commandWord = command.getCommandWord();
 		if (commandWord.equals("help")) {
 			printHelp();
-		}else if (commandWord.equals("map")) {
+		} else if (commandWord.equals("map")) {
 			System.out.println("Currentroom: " + currentRoom.shortDescription());
 			System.out.println("All Rooms: ");
 			for (Room room : map) {
 				System.out.println(room.shortDescription());
 			}
-		} 
-    else if (commandWord.equals("go")) {
+		} else if (commandWord.equals("go")) {
 			goRoom(command);
-			
+
 			// Gewonnen?
-			if (currentRoom==tavern) {
+			if (currentRoom == tavern) {
 				System.out.println("Sie sind in der Taverne und haben gewonnen!");
 				return true;
 			}
-			
+
 		} else if (commandWord.equals("get")) {
 			if (command.hasSecondWord()) {
-				// TODO: Gegenstand im Rucksack aufnehmen  //backpack.add(item); 
+				// TODO: Gegenstand im Rucksack aufnehmen //backpack.add(item);
 			}
 		} else if (commandWord.equals("put")) {
 			// TODO: Gegenstand aus dem Rucksack nehmen und ablegen
-			
+
 		} else if (commandWord.equals("show")) {
 			// Gegenstände die im Rucksack sind zeigen.
-			
+
 		} else if (commandWord.equals("back")) {
 			if (!previousRooms.isEmpty()) {
 				currentRoom = previousRooms.pop();
@@ -151,7 +146,7 @@ public class Game {
 			} else {
 				System.out.println("Don't know where to go :(");
 			}
-			
+
 		} else if (commandWord.equals("quit")) {
 			if (command.hasSecondWord()) {
 				System.out.println("Quit what?");
@@ -164,12 +159,11 @@ public class Game {
 
 	/*
 	 * implementations of user commands:
-	 */ 
+	 */
 
 	/**
-	 * Print out some help information.
-	 * Here we print some stupid, cryptic message and a list of the 
-	 * command words.
+	 * Print out some help information. Here we print some stupid, cryptic message
+	 * and a list of the command words.
 	 */
 	private void printHelp() {
 		System.out.println("You are lost. You are alone. You wander");
@@ -179,28 +173,28 @@ public class Game {
 		System.out.println(parser.showCommands());
 	}
 
-	/** 
-	 * Try to go to one direction. If there is an exit, enter the new
-	 * room, otherwise print an error message.
+	/**
+	 * Try to go to one direction. If there is an exit, enter the new room,
+	 * otherwise print an error message.
 	 */
 	private void goRoom(Command command) {
 		// if there is no second word, we don't know where to go...
 		if (!command.hasSecondWord()) {
 			System.out.println("Go where?");
 		} else {
-			
+
 			String direction = command.getSecondWord();
-	
+
 			// Try to leave current room.
 			Room nextRoom = currentRoom.nextRoom(direction);
-	
+
 			if (nextRoom == null)
 				System.out.println("There is no door!");
 			else {
 				previousRooms.push(currentRoom);
 				currentRoom = nextRoom;
 				System.out.println(currentRoom.longDescription());
-				
+
 			}
 		}
 	}
