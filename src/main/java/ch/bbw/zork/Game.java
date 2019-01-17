@@ -28,6 +28,7 @@ public class Game {
 	private Item hammer, key;
 	private ArrayList<Room> map;
 	private Stack<Room> previousRooms;
+	private Backpack bag = new Backpack();
 
 	/**
 	 * Create the game and initialise its internal map.
@@ -66,9 +67,11 @@ public class Game {
 		hammer = new Item("Hammer", "Crafting Tool", 2.0);
 
 		key = new Item("Key", "Used for opening doors", 0.5);
+		
 
 		lab.addItem(hammer);
 		outside.addItem(key);
+		
 
 	}
 
@@ -131,13 +134,41 @@ public class Game {
 
 		} else if (commandWord.equals("get")) {
 			if (command.hasSecondWord()) {
+				ArrayList<Item> itemeqs = currentRoom.getItems();
+				
+				Boolean bol = false;
+				String secound = command.getSecondWord();
+				System.out.println(secound);
+				
+				for (int i = 0; i < itemeqs.size();) {
+					if(itemeqs.get(i).getName().equals(secound)) {
+						Item itemfin = currentRoom.getItem(secound);
+						bag.addItem(itemfin);
+						System.out.println("Item now in your Bag:" + itemfin.getName());
+						bol = true;
+					}
+					i++;
+				}
+				
+				if(bol == false) {
+					System.out.println("This Item don't exist in Room:" + currentRoom.shortDescription());
+				}
 				// TODO: Gegenstand im Rucksack aufnehmen //backpack.add(item);
 			}
-		} else if (commandWord.equals("put")) {
+		} 
+		else if (commandWord.equals("put")) {
 			// TODO: Gegenstand aus dem Rucksack nehmen und ablegen
+			
+			if (command.hasSecondWord()) {
+				if(bag.isInInventorybyStr(command.getSecondWord())) {
+					bag.removeItembyStr(command.getSecondWord());
+				}
+			}
 
-		} else if (commandWord.equals("show")) {
-			// Gegenstände die im Rucksack sind zeigen.
+		} else if (commandWord.equals("backpack")) {
+			
+			bag.printInventory();
+			
 
 		} else if (commandWord.equals("back")) {
 			if (!previousRooms.isEmpty()) {
