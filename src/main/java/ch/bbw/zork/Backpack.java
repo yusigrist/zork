@@ -71,6 +71,7 @@ public class Backpack {
 		if (bag.size() == 0) {
 			System.out.println("There is nothing in your Bag! :)");
 		} else if (bag.size() > 0) {
+			System.out.println("Total Bag weight: " + nowweight);
 
 			for (int i = 0; i < bag.size(); i++) {
 				System.out.println(bag.get(i).getName());

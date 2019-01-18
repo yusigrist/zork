@@ -140,10 +140,10 @@ public class Game {
 
 				for (int i = 0; i < itemeqs.size();) {
 					if (itemeqs.get(i).getName().equals(secound)) {
-						if(bag.checkweight(itemeqs.get(i))) {
-						Item itemfin = currentRoom.getItem(secound);
-						bag.addItem(itemfin);
-						System.out.println("Item now in your Bag:" + itemfin.getName());
+						if (bag.checkweight(itemeqs.get(i))) {
+							Item itemfin = currentRoom.getItem(secound);
+							bag.addItem(itemfin);
+							System.out.println("Item now in your Bag:" + itemfin.getName());
 						}
 						bol = true;
 					}
