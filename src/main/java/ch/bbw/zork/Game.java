@@ -165,6 +165,16 @@ public class Game {
 					}
 					gblock.addGhost(new Ghost(false));
 					System.out.println("OH NO! A GHOST IS COMING FOR YOU!!!! RUN!!!!");
+					try {
+						TimeUnit.SECONDS.sleep(time);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					System.out.println("GAME OVER!!!!!");
+					
+					return true;
 				}
 			}
 			// Gewonnen?
