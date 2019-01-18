@@ -1,7 +1,9 @@
 package ch.bbw.zork;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class Game - the main class of the "Zork" game.
@@ -25,9 +27,11 @@ public class Game {
 	private Parser parser;
 	private Room currentRoom;
 	private Room outside, lab, tavern, gblock, office, garden;
-	private Item hammer, key;
+	private Item hammer, key, coat;
 	private ArrayList<Room> map;
 	private Stack<Room> previousRooms;
+	Random r;
+
 	private Backpack bag = new Backpack();
 
 	/**
@@ -35,6 +39,7 @@ public class Game {
 	 */
 	public Game() {
 
+		r = new Random();
 		parser = new Parser(System.in);
 
 		// Create all the rooms and link their exits together.
@@ -53,6 +58,9 @@ public class Game {
 		office.setExits(null, null, null, gblock);
 		garden.setExits(null, gblock, outside, null);
 
+		//Add ghosts
+		lab.addGhost(new Ghost(true));
+
 		currentRoom = outside; // start game outside
 		previousRooms = new Stack<>();
 
@@ -68,8 +76,11 @@ public class Game {
 
 		key = new Item("Key", "Used for opening doors", 0.5);
 
+		coat = new Item("Coat", "This cot protects you against angry ghosts.", 5.0);
+
 		lab.addItem(hammer);
 		outside.addItem(key);
+		garden.addItem(coat);
 
 	}
 
@@ -121,9 +132,37 @@ public class Game {
 			for (Room room : map) {
 				System.out.println(room.shortDescription());
 			}
-		} else if (commandWord.equals("go")) {
+		} else if(commandWord.equals("say")) {
+			if(command.hasSecondWord()){
+				ArrayList<Ghost> ghosts = currentRoom.getGhosts();
+				if(!ghosts.isEmpty()){
+					for (Ghost ghost : ghosts) {
+						if (ghost.isFriendly()){
+							System.out.println(ghost.responseToPlyer(command.getSecondWord()));
+						} else {
+							System.out.println("RUN!!");
+						}
+					}
+				} else {
+					System.out.println("No one is here.");
+				}
+			} else {
+				System.out.println("No one is here.");
+			}
+		}else if (commandWord.equals("go")) {
 			goRoom(command);
 
+			if(currentRoom == gblock){
+				int time = r.nextInt(10) + 5;
+				System.out.println("Something is wrong....");
+				try {
+					TimeUnit.SECONDS.sleep(time);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				gblock.addGhost(new Ghost(false));
+				System.out.println("OH NO! A GHOST IS COMING FOR YOU!!!! RUN!!!!");
+			}
 			// Gewonnen?
 			if (currentRoom == tavern) {
 				System.out.println("Sie sind in der Taverne und haben gewonnen!");
