@@ -155,13 +155,17 @@ public class Game {
 			if(currentRoom == gblock){
 				int time = r.nextInt(10) + 5;
 				System.out.println("Something is wrong....");
-				try {
-					TimeUnit.SECONDS.sleep(time);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				if(bag.isInInventorybyStr("Coat")){
+					System.out.println("Oh, there is a Ghost. But he won't harm you since you have the magical coat.");
+				} else {
+					try {
+						TimeUnit.SECONDS.sleep(time);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					gblock.addGhost(new Ghost(false));
+					System.out.println("OH NO! A GHOST IS COMING FOR YOU!!!! RUN!!!!");
 				}
-				gblock.addGhost(new Ghost(false));
-				System.out.println("OH NO! A GHOST IS COMING FOR YOU!!!! RUN!!!!");
 			}
 			// Gewonnen?
 			if (currentRoom == tavern) {
